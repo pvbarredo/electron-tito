@@ -4,4 +4,10 @@ publish:
     provider: github
     token: YOUR_GITHUB_TOKEN
 
+files:
+    [
+        "db/**/*",
+        "python/**/*"
+    ]
+
 icon: ./assets/icon/icon.png
