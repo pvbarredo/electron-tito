@@ -4,4 +4,4 @@ publish:
     provider: github
     token: YOUR_GITHUB_TOKEN
 
-icon: ./assets/icon.ico
+icon: ./assets/icon/icon.png
