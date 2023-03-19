@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+<head>
+    <meta charset="UTF-8">
+    <title>Email</title>
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+<body onload="bodyOnload()">
+is Start day email <span id="isStartDay"> false </span>
+<div>
+    <label for="emailTo">Email To:</label>
+    <input type="text" id="emailTo"/>
+</div>
+<div>
+    <label for="bodyEmail">Email Body:</label>
+    <textarea id="bodyEmail" name="bodyEmail" rows="30" cols="50"></textarea>
+</div>
+<script src="./js/email-renderer.js"></script>
+</body>
+</html>
