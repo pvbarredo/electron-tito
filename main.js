@@ -2,11 +2,12 @@ const {app, BrowserWindow, ipcMain, nativeTheme} = require('electron')
 const path = require('path')
 const {PythonShell} = require('python-shell')
 const sqlite = require('sqlite-electron')
+const { autoUpdater } = require("electron-updater")
 
 sqlite.setdbPath("./db/tito.sqlite3")
 
 function createWindow() {
-    const win = new BrowserWindow({
+    const mainWindow = new BrowserWindow({
         width: 800,
         height: 700,
         webPreferences: {
@@ -14,7 +15,11 @@ function createWindow() {
         }
     })
 
-    win.loadFile(path.join(__dirname, './renderer/index.html'))
+    mainWindow.loadFile(path.join(__dirname, './renderer/index.html'))
+
+    mainWindow.once("ready-to-show", () => {
+        autoUpdater.checkForUpdatesAndNotify();
+    });
 
     ipcMain.handle('email:start-day', () => {
         createEmailWindow(true)
