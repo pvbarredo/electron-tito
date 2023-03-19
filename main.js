@@ -3,10 +3,12 @@ const path = require('path')
 const {PythonShell} = require('python-shell')
 const sqlite = require('sqlite-electron')
 const { autoUpdater } = require("electron-updater")
+let log = require("electron-log")
 
 sqlite.setdbPath("./db/tito.sqlite3")
 
 function createWindow() {
+    log.info("Creating mainwindow ")
     const mainWindow = new BrowserWindow({
         width: 800,
         height: 700,
@@ -18,6 +20,7 @@ function createWindow() {
     mainWindow.loadFile(path.join(__dirname, './renderer/index.html'))
 
     mainWindow.once("ready-to-show", () => {
+        log.info("Checking for update ")
         autoUpdater.checkForUpdatesAndNotify();
     });
 
@@ -33,35 +36,44 @@ function createWindow() {
 
     ipcMain.handle('python:send-start-day', () => {
         console.log("send start day ")
+        log.info("send start day ")
         let pyshell = new PythonShell('./python/main.py')
         pyshell.on('message', function (message) {
             console.log(message);
+            log.info(message);
         })
         pyshell.end(function (err) {
             if (err) {
+                log.error(err);
                 throw err;
             }
             console.log('finished');
+            log.info("finished");
         })
     })
 
     ipcMain.handle('python:send-end-day', () => {
         console.log("send end day ")
+        log.info("send end day ");
         let pyshell = new PythonShell('./python/main.py')
         pyshell.on('message', function (message) {
             console.log(message);
+            log.info(message);
         })
         pyshell.end(function (err) {
             if (err) {
+                log.error(err);
                 throw err;
             }
-
+            log.info('finished');
             console.log('finished');
         })
     })
 
     ipcMain.handle('executeQuery', async (event, query) => {
-        return await sqlite.executeQuery(query, "all", []);
+        return await sqlite.executeQuery(query, "all", []).then(data => data).catch(error => {
+            log.error(error);
+        });
     })
 }
 

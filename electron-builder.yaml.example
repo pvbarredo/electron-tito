@@ -4,10 +4,15 @@ publish:
     provider: github
     token: YOUR_GITHUB_TOKEN
 
+extraFiles: [
+  "db/tito.sqlite3",
+  "python/main.py"
+]
+
 files:
-    [
-        "db/**/*",
-        "python/**/*"
-    ]
+  [
+    "*.js",
+    "renderer/**/*"
+  ]
 
 icon: ./assets/icon/icon.png
