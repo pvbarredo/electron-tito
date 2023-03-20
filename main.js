@@ -1,15 +1,19 @@
-const {app, BrowserWindow, ipcMain, nativeTheme} = require('electron')
+const {app, BrowserWindow, ipcMain, Tray, Menu} = require('electron')
 const path = require('path')
 const {PythonShell} = require('python-shell')
 const sqlite = require('sqlite-electron')
-const { autoUpdater } = require("electron-updater")
+const {autoUpdater} = require("electron-updater")
 let log = require("electron-log")
+
 
 sqlite.setdbPath("./db/tito.sqlite3")
 
+let tray = null
+let mainWindow = null
+
 function createWindow() {
     log.info("Creating mainwindow ")
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 800,
         height: 700,
         webPreferences: {
@@ -18,6 +22,11 @@ function createWindow() {
     })
 
     mainWindow.loadFile(path.join(__dirname, './renderer/index.html'))
+
+    mainWindow.on("close", event => {
+        event.sender.hide()
+        event.preventDefault() //prevent quit process
+    })
 
     mainWindow.once("ready-to-show", () => {
         log.info("Checking for update ")
@@ -92,7 +101,6 @@ function createEmailWindow(isStartDayEmail) {
 
 
     ipcMain.on('emailWindow:is-start-day', (event) => {
-        console.log("TINAWAG" , isStartDayEmail)
         event.returnValue = isStartDayEmail
     })
 }
@@ -105,10 +113,37 @@ app.whenReady().then(() => {
             createWindow()
         }
     })
+
+    tray = new Tray('./assets/icon/icon.ico')
+    const contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Show App',
+            click: () => {
+                if(!mainWindow.isVisible()){
+                    mainWindow.show()
+                }
+            }
+        },
+        {
+            label: 'Close App',
+            click: () => {app.quit()}
+        }
+    ])
+    tray.setToolTip('This is my application.')
+    tray.setContextMenu(contextMenu)
+    tray.on("click", ()=>{
+        if(!mainWindow.isVisible()){
+            mainWindow.show()
+        }
+    })
 })
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit()
     }
+})
+
+app.setLoginItemSettings({
+    openAtLogin: true
 })
