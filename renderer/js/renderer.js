@@ -1,3 +1,6 @@
+import packageJSON from "../../package.json" assert {type: 'json'}
+document.title = "TITO " + packageJSON.version
+
 document.getElementById('send-start-day').addEventListener('click', async () => {
     await window.email.startDay()
 })
@@ -6,16 +9,12 @@ document.getElementById('send-end-day').addEventListener('click', async () => {
     await window.email.endDay()
 })
 
-document.getElementById('fetch').addEventListener('click', async () => {
-    let result = await window.sqlite.executeQuery("SELECT * FROM user")
-    console.log(result)
-})
-
 function showTime() {
     var date = new Date();
     var h = date.getHours();
     var m = date.getMinutes();
     var s = date.getSeconds();
+    var hh = ''
     var session = "AM";
     if (h == 0) {
         h = 12;

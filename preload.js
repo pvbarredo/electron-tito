@@ -10,10 +10,3 @@ contextBridge.exposeInMainWorld('email', {
     endDay: () => ipcRenderer.invoke('email:end-day'),
     close: () => ipcRenderer.invoke('email:close')
 })
-
-contextBridge.exposeInMainWorld('sqlite', {
-    executeQuery: (query) => {
-        console.log(query + " from expose")
-        return ipcRenderer.invoke('executeQuery', query)
-    }
-})

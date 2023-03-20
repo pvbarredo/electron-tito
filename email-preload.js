@@ -4,7 +4,7 @@ contextBridge.exposeInMainWorld('email', {
     sendMail: () => {
         const emailTo = document.getElementById("emailTo").value
         const emailSubject = document.getElementById("emailSubject").value
-        const emailBody = document.getElementById("emailBody").textContent
+        const emailBody = document.getElementById("emailBody").value
         console.log(emailTo, emailSubject, emailBody)
 
         ipcRenderer.invoke('email:send-mail', {emailTo, emailSubject, emailBody})

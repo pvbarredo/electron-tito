@@ -23,7 +23,7 @@ def reply_email(mail_subject, mail_body):
         return
 
     reply_mail = message.ReplyAll()
-    reply_mail.Body = mail_body + reply_mail.Body
+    reply_mail.Body = "Accomplished\n " + mail_body + reply_mail.Body
     reply_mail.Send()
 
 
@@ -32,7 +32,7 @@ def send_email(mail_to, mail_subject, mail_body):
     mail = outlook.CreateItem(0)
     mail.To = mail_to
     mail.Subject = mail_subject
-    mail.Body = mail_body
+    mail.Body = "Plan to Do\n " + mail_body
     mail.Send()
 
 

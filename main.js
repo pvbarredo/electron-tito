@@ -51,42 +51,6 @@ function createMainWindow() {
         createEmailWindow(false)
     })
 
-    ipcMain.handle('python:send-start-day', () => {
-        console.log("send start day ")
-        log.info("send start day ")
-        let pyshell = new PythonShell('./python/main.py')
-        pyshell.on('message', function (message) {
-            console.log(message);
-            log.info(message);
-        })
-        pyshell.end(function (err) {
-            if (err) {
-                log.error(err);
-                throw err;
-            }
-            console.log('finished');
-            log.info("finished");
-        })
-    })
-
-    ipcMain.handle('python:send-end-day', () => {
-        console.log("send end day ")
-        log.info("send end day ");
-        let pyshell = new PythonShell('./python/main.py')
-        pyshell.on('message', function (message) {
-            console.log(message);
-            log.info(message);
-        })
-        pyshell.end(function (err) {
-            if (err) {
-                log.error(err);
-                throw err;
-            }
-            log.info('finished');
-            console.log('finished');
-        })
-    })
-
     ipcMain.handle('executeQuery', async (event, query) => {
         const db = await createDBConnection()
         const row = await db.get(query)
@@ -107,7 +71,7 @@ function createEmailWindow(isStartDayEmail) {
     emailWindow = new BrowserWindow({
         parent: mainWindow,
         width: 500,
-        height: 650,
+        height: 750,
         webPreferences: {
             preload: path.join(__dirname, 'email-preload.js')
         }
@@ -129,18 +93,24 @@ function createEmailWindow(isStartDayEmail) {
         let pyshell = new PythonShell('./python/main.py')
 
         pyshell.send(JSON.stringify(args))
-
-        pyshell.on('message', function (message) {
-            console.log(message);
-            log.info(message);
-        })
-        pyshell.end(function (err) {
+        pyshell.end(async function (err) {
             if (err) {
                 log.error(err);
                 throw err;
             }
             log.info('finished');
             console.log('finished');
+
+            //after sending email  save
+            let query = "UPDATE email SET  body_email = ?, to_email = ?  WHERE NAME='start_day' OR NAME='end_day'"
+            if(!isStartDayEmail){
+                query = "UPDATE email SET body_email = ?, to_email = ?  WHERE NAME='end_day'"
+            }
+            const db = await createDBConnection()
+            await db.run(query, args.emailBody , args.emailTo)
+            await db.close()
+
+            emailWindow.close()
         })
     })
 }
