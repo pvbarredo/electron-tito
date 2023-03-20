@@ -16,7 +16,6 @@ ipcRenderer.on('isStartDayEmail', (event, args) => {
 })
 
 ipcRenderer.on('email_data', (event, args) => {
-
     document.getElementById("emailTo").value = args.to_email;
     document.getElementById("emailSubject").value = "WFH " + new Date().toDateString();
     document.getElementById("emailBody").textContent = args.body_email;

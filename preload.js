@@ -16,11 +16,13 @@ contextBridge.exposeInMainWorld('email', {
 
 
 ipcRenderer.on('checkStartDayEmail', (event, args) => {
-    console.log(args)
-    alert(args === 'True' ? "You already sent a start day email" : "You have not yet submitted a start day email")
+    if(args !== 'True'){
+        new Notification("START DAY EMAIL", { body: "You have not yet submitted a start day email" })
+    }
 })
 
 ipcRenderer.on('checkEndDayEmail', (event, args) => {
-    console.log(args)
-    alert(args === 'True' ? "You already sent an end day email" : "You have not yet submitted an end day email")
+    if(args !== 'True'){
+        new Notification("END DAY EMAIL", { body: "You have not yet submitted an end day email"})
+    }
 })

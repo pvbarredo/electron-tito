@@ -3,6 +3,7 @@ const path = require('path')
 const {PythonShell} = require('python-shell')
 const {autoUpdater} = require("electron-updater")
 let log = require("electron-log")
+const packageJson = require('./package.json');
 
 const sqlite3 = require('sqlite3').verbose()
 const {open} = require('sqlite')
@@ -31,10 +32,10 @@ function createMainWindow() {
     mainWindow.loadFile(path.join(__dirname, './renderer/index.html'))
 
 
-    // mainWindow.on("close", event => {
-    //     event.sender.hide()
-    //     event.preventDefault() //prevent quit process
-    // })
+    mainWindow.on("close", event => {
+        event.sender.hide()
+        event.preventDefault() //prevent quit process
+    })
 
 
     mainWindow.once("ready-to-show", () => {
@@ -184,11 +185,12 @@ app.whenReady().then(() => {
         {
             label: 'Close App',
             click: () => {
+                mainWindow.close()
                 app.quit()
             }
         }
     ])
-    tray.setToolTip('This is my application.')
+    tray.setToolTip('Tito ' + packageJson.version)
     tray.setContextMenu(contextMenu)
     tray.on("click", () => {
         if (!mainWindow.isVisible()) {

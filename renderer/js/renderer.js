@@ -16,6 +16,14 @@ document.getElementById('check-end-day').addEventListener('click', async () => {
     await window.email.checkEndDay()
 })
 
+setInterval(() => {
+    document.getElementById('check-end-day').click()
+}, 60 * 1000 * 30)
+
+setInterval(() => {
+    document.getElementById('check-start-day').click()
+}, 60 * 1000 * 30)
+
 function showTime() {
     var date = new Date();
     var h = date.getHours();
