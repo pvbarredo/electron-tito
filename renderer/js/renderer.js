@@ -1,10 +1,9 @@
 document.getElementById('send-start-day').addEventListener('click', async () => {
-    // let result = await window.sqlite.executeQuery("SELECT * FROM email WHERE name = 'start_day'")
-    await window.python.startDay()
+    await window.email.startDay()
 })
 
 document.getElementById('send-end-day').addEventListener('click', async () => {
-    await window.python.endDay()
+    await window.email.endDay()
 })
 
 document.getElementById('fetch').addEventListener('click', async () => {

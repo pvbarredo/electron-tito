@@ -1,32 +1,42 @@
 const {app, BrowserWindow, ipcMain, Tray, Menu} = require('electron')
 const path = require('path')
 const {PythonShell} = require('python-shell')
-const sqlite = require('sqlite-electron')
 const {autoUpdater} = require("electron-updater")
 let log = require("electron-log")
 
+const sqlite3 = require('sqlite3').verbose()
+const { open } = require('sqlite')
 
-sqlite.setdbPath("./db/tito.sqlite3")
 
 let tray = null
 let mainWindow = null
 
-function createWindow() {
+
+function createDBConnection(){
+    return open({
+        filename: "./db/tito.sqlite3",
+        driver: sqlite3.Database
+    })
+}
+
+function createMainWindow() {
     log.info("Creating mainwindow ")
     mainWindow = new BrowserWindow({
-        width: 800,
+        width: 1000,
         height: 700,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
     })
-
     mainWindow.loadFile(path.join(__dirname, './renderer/index.html'))
 
-    mainWindow.on("close", event => {
-        event.sender.hide()
-        event.preventDefault() //prevent quit process
-    })
+
+
+        // mainWindow.on("close", event => {
+    //     event.sender.hide()
+    //     event.preventDefault() //prevent quit process
+    // })
+
 
     mainWindow.once("ready-to-show", () => {
         log.info("Checking for update ")
@@ -80,14 +90,16 @@ function createWindow() {
     })
 
     ipcMain.handle('executeQuery', async (event, query) => {
-        return await sqlite.executeQuery(query, "all", []).then(data => data).catch(error => {
-            log.error(error);
-        });
+        const db = await createDBConnection()
+        const row = await db.get(query)
+        return row
+
     })
 }
 
 function createEmailWindow(isStartDayEmail) {
     const emailWindow = new BrowserWindow({
+        parent: mainWindow,
         width: 300,
         height: 400,
         webPreferences: {
@@ -106,11 +118,11 @@ function createEmailWindow(isStartDayEmail) {
 }
 
 app.whenReady().then(() => {
-    createWindow()
+    createMainWindow()
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow()
+            createMainWindow()
         }
     })
 
