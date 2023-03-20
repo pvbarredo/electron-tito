@@ -5,14 +5,15 @@ const {autoUpdater} = require("electron-updater")
 let log = require("electron-log")
 
 const sqlite3 = require('sqlite3').verbose()
-const { open } = require('sqlite')
+const {open} = require('sqlite')
 
 
 let tray = null
 let mainWindow = null
+let emailWindow = null
 
 
-function createDBConnection(){
+function createDBConnection() {
     return open({
         filename: "./db/tito.sqlite3",
         driver: sqlite3.Database
@@ -31,8 +32,7 @@ function createMainWindow() {
     mainWindow.loadFile(path.join(__dirname, './renderer/index.html'))
 
 
-
-        // mainWindow.on("close", event => {
+    // mainWindow.on("close", event => {
     //     event.sender.hide()
     //     event.preventDefault() //prevent quit process
     // })
@@ -45,12 +45,11 @@ function createMainWindow() {
 
     ipcMain.handle('email:start-day', () => {
         createEmailWindow(true)
-        return
+
     })
 
     ipcMain.handle('email:end-day', () => {
         createEmailWindow(false)
-        return
     })
 
     ipcMain.handle('python:send-start-day', () => {
@@ -92,28 +91,38 @@ function createMainWindow() {
     ipcMain.handle('executeQuery', async (event, query) => {
         const db = await createDBConnection()
         const row = await db.get(query)
+        await db.close()
         return row
 
     })
 }
 
 function createEmailWindow(isStartDayEmail) {
-    const emailWindow = new BrowserWindow({
+    if(emailWindow) {
+        if (!emailWindow.isDestroyed()) {
+            console.log("SHOW MAY EMAIL WINDOW AT DI DESTROYED")
+            emailWindow.show()
+            return
+        }
+    }
+    emailWindow = new BrowserWindow({
         parent: mainWindow,
-        width: 300,
-        height: 400,
+        width: 500,
+        height: 600,
         webPreferences: {
             preload: path.join(__dirname, 'email-preload.js')
         }
     })
     emailWindow.loadFile(path.join(__dirname, './renderer/email.html'))
-    emailWindow.on("close", () => {
-        emailWindow.destroy()
-    })
 
+    emailWindow.webContents.on("did-finish-load", async() => {
+        emailWindow.webContents.send('isStartDayEmail', isStartDayEmail)
+        const query = isStartDayEmail ? "SELECT * FROM EMAIL WHERE NAME = 'start_day'" :  "SELECT * FROM EMAIL WHERE NAME = 'end_day'"
+        const db = await createDBConnection()
+        const row = await db.get(query)
+        await db.close()
 
-    ipcMain.on('emailWindow:is-start-day', (event) => {
-        event.returnValue = isStartDayEmail
+        emailWindow.webContents.send('email_data', row)
     })
 }
 
@@ -131,20 +140,22 @@ app.whenReady().then(() => {
         {
             label: 'Show App',
             click: () => {
-                if(!mainWindow.isVisible()){
+                if (!mainWindow.isVisible()) {
                     mainWindow.show()
                 }
             }
         },
         {
             label: 'Close App',
-            click: () => {app.quit()}
+            click: () => {
+                app.quit()
+            }
         }
     ])
     tray.setToolTip('This is my application.')
     tray.setContextMenu(contextMenu)
-    tray.on("click", ()=>{
-        if(!mainWindow.isVisible()){
+    tray.on("click", () => {
+        if (!mainWindow.isVisible()) {
             mainWindow.show()
         }
     })
