@@ -16,12 +16,14 @@ document.getElementById('check-end-day').addEventListener('click', async () => {
     await window.email.checkEndDay()
 })
 
-setInterval(() => {
-    document.getElementById('check-end-day').click()
+
+// EVERY 30 MINS CHECKING IF YOU ALREADY SEND AN EMAIL
+setInterval(async() => {
+    await window.email.checkStartDayInBackground()
 }, 60 * 1000 * 30)
 
-setInterval(() => {
-    document.getElementById('check-start-day').click()
+setInterval(async() => {
+    await window.email.checkEndDayInBackground()
 }, 60 * 1000 * 30)
 
 function showTime() {
@@ -48,10 +50,3 @@ function showTime() {
 
 }
 showTime()
-
-
-const NOTIFICATION_TITLE = 'Title'
-const NOTIFICATION_BODY = 'Notification from the Renderer process. Click to log to console.'
-const CLICK_MESSAGE = 'Notification clicked!'
-
-// new Notification(NOTIFICATION_TITLE, { body: NOTIFICATION_BODY }).onclick = () => document.getElementById("output").innerText = CLICK_MESSAGE

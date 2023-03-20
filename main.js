@@ -8,6 +8,9 @@ const packageJson = require('./package.json');
 const sqlite3 = require('sqlite3').verbose()
 const {open} = require('sqlite')
 
+if (process.platform === 'win32') {
+    app.setAppUserModelId("Tito " + packageJson.version)
+}
 
 let tray = null
 let mainWindow = null
@@ -53,15 +56,19 @@ function createMainWindow() {
     })
 
     ipcMain.handle('email:check-start-day', (event, args) => {
+        const isForBackgroundProcess = !!args
         let payload = {
-            isStartDayEmail : true,
-            emailSubject : "WFH " + new Date().toDateString()
+            isStartDayEmail: true,
+            emailSubject: "WFH " + new Date().toDateString()
         }
         let pyshell = new PythonShell('./python/check.py')
 
         pyshell.send(JSON.stringify(payload))
-        pyshell.on("message", function(message) {
-            mainWindow.webContents.send('checkStartDayEmail', message)
+        pyshell.on("message", function (message) {
+
+            isForBackgroundProcess ? mainWindow.webContents.send('checkStartDayEmailInBackground', message)
+                : mainWindow.webContents.send('checkStartDayEmail', message)
+
         })
         pyshell.end(async function (err) {
             if (err) {
@@ -76,16 +83,17 @@ function createMainWindow() {
     })
 
     ipcMain.handle('email:check-end-day', (event, args) => {
+        const isForBackgroundProcess = !!args
         let payload = {
-            isStartDayEmail : false,
-            emailSubject : "RE: WFH " + new Date().toDateString()
+            isStartDayEmail: false,
+            emailSubject: "RE: WFH " + new Date().toDateString()
         }
         let pyshell = new PythonShell('./python/check.py')
 
         pyshell.send(JSON.stringify(payload), {mode: 'json'})
-        pyshell.on("message", function(message) {
-            console.log(message)
-            mainWindow.webContents.send('checkEndDayEmail', message)
+        pyshell.on("message", function (message) {
+            isForBackgroundProcess ? mainWindow.webContents.send('checkEndDayEmailInBackground', message) :
+                mainWindow.webContents.send('checkEndDayEmail', message)
         })
         pyshell.end(async function (err) {
             if (err) {
@@ -109,7 +117,7 @@ function createMainWindow() {
 }
 
 function createEmailWindow(isStartDayEmail) {
-    if(emailWindow) {
+    if (emailWindow) {
         if (!emailWindow.isDestroyed()) {
             console.log("SHOW MAY EMAIL WINDOW AT DI DESTROYED")
             emailWindow.show()
@@ -126,9 +134,9 @@ function createEmailWindow(isStartDayEmail) {
     })
     emailWindow.loadFile(path.join(__dirname, './renderer/email.html'))
 
-    emailWindow.webContents.on("did-finish-load", async() => {
+    emailWindow.webContents.on("did-finish-load", async () => {
         emailWindow.webContents.send('isStartDayEmail', isStartDayEmail)
-        const query = isStartDayEmail ? "SELECT * FROM EMAIL WHERE NAME = 'start_day'" :  "SELECT * FROM EMAIL WHERE NAME = 'end_day'"
+        const query = isStartDayEmail ? "SELECT * FROM EMAIL WHERE NAME = 'start_day'" : "SELECT * FROM EMAIL WHERE NAME = 'end_day'"
         const db = await createDBConnection()
         const row = await db.get(query)
         await db.close()
@@ -151,11 +159,11 @@ function createEmailWindow(isStartDayEmail) {
 
             //after sending email  save
             let query = "UPDATE email SET  body_email = ?, to_email = ?  WHERE NAME='start_day' OR NAME='end_day'"
-            if(!isStartDayEmail){
+            if (!isStartDayEmail) {
                 query = "UPDATE email SET body_email = ?, to_email = ?  WHERE NAME='end_day'"
             }
             const db = await createDBConnection()
-            await db.run(query, args.emailBody , args.emailTo)
+            await db.run(query, args.emailBody, args.emailTo)
             await db.close()
 
             emailWindow.close()
