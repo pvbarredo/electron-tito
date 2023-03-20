@@ -1,6 +1,4 @@
-// async function bodyOnPageShow (){
-//     const isStartDay = await window.emailWindow.isStartDayEmail()
-//     // alert("show " + isStartDay)
-//     document.getElementById("isStartDay").textContent = isStartDay
-// }
+document.getElementById('sendMail').addEventListener('click', async () => {
+    await window.email.sendMail()
+})
 

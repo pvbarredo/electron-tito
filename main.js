@@ -12,7 +12,6 @@ let tray = null
 let mainWindow = null
 let emailWindow = null
 
-
 function createDBConnection() {
     return open({
         filename: "./db/tito.sqlite3",
@@ -108,7 +107,7 @@ function createEmailWindow(isStartDayEmail) {
     emailWindow = new BrowserWindow({
         parent: mainWindow,
         width: 500,
-        height: 600,
+        height: 650,
         webPreferences: {
             preload: path.join(__dirname, 'email-preload.js')
         }
@@ -123,6 +122,26 @@ function createEmailWindow(isStartDayEmail) {
         await db.close()
 
         emailWindow.webContents.send('email_data', row)
+    })
+    ipcMain.removeHandler('email:send-mail') //because we are using same window - it cannot register another handle
+    ipcMain.handle('email:send-mail', (event, args) => {
+        args['isStartDayEmail'] = isStartDayEmail
+        let pyshell = new PythonShell('./python/main.py')
+
+        pyshell.send(JSON.stringify(args))
+
+        pyshell.on('message', function (message) {
+            console.log(message);
+            log.info(message);
+        })
+        pyshell.end(function (err) {
+            if (err) {
+                log.error(err);
+                throw err;
+            }
+            log.info('finished');
+            console.log('finished');
+        })
     })
 }
 
