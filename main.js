@@ -51,6 +51,53 @@ function createMainWindow() {
         createEmailWindow(false)
     })
 
+    ipcMain.handle('email:check-start-day', (event, args) => {
+        let payload = {
+            isStartDayEmail : true,
+            emailSubject : "WFH " + new Date().toDateString()
+        }
+        let pyshell = new PythonShell('./python/check.py')
+
+        pyshell.send(JSON.stringify(payload))
+        pyshell.on("message", function(message) {
+            mainWindow.webContents.send('checkStartDayEmail', message)
+        })
+        pyshell.end(async function (err) {
+            if (err) {
+                console.log(err);
+                log.error(err);
+
+                throw err;
+            }
+            log.info('finished');
+            console.log('finished');
+        })
+    })
+
+    ipcMain.handle('email:check-end-day', (event, args) => {
+        let payload = {
+            isStartDayEmail : false,
+            emailSubject : "RE: WFH " + new Date().toDateString()
+        }
+        let pyshell = new PythonShell('./python/check.py')
+
+        pyshell.send(JSON.stringify(payload), {mode: 'json'})
+        pyshell.on("message", function(message) {
+            console.log(message)
+            mainWindow.webContents.send('checkEndDayEmail', message)
+        })
+        pyshell.end(async function (err) {
+            if (err) {
+                console.log(err);
+                log.error(err);
+
+                throw err;
+            }
+            log.info('finished');
+            console.log('finished');
+        })
+    })
+
     ipcMain.handle('executeQuery', async (event, query) => {
         const db = await createDBConnection()
         const row = await db.get(query)

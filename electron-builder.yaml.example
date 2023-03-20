@@ -6,7 +6,7 @@ publish:
 
 extraFiles: [
   "db/tito.sqlite3",
-  "python/main.py"
+  "python/**/*"
 ]
 
 files:

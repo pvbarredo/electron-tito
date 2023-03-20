@@ -6,9 +6,7 @@ import win32com.client
 
 def _find_message_using_subject(messages, subject):
     for i in range(0, len(messages)):
-        # print(messages[i].Subject, subject)
         if messages[i].Subject == subject:
-            # print(messages[i])
             return messages[i]
 
 

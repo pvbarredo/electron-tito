@@ -8,6 +8,13 @@ document.getElementById('send-start-day').addEventListener('click', async () => 
 document.getElementById('send-end-day').addEventListener('click', async () => {
     await window.email.endDay()
 })
+document.getElementById('check-start-day').addEventListener('click', async () => {
+    await window.email.checkStartDay()
+})
+
+document.getElementById('check-end-day').addEventListener('click', async () => {
+    await window.email.checkEndDay()
+})
 
 function showTime() {
     var date = new Date();
