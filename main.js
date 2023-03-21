@@ -36,10 +36,11 @@ function createMainWindow() {
     mainWindow.loadFile(path.join(__dirname, './renderer/index.html'))
 
 
-
     mainWindow.on("close", event => {
-        event.sender.hide()
-        event.preventDefault() //prevent quit process
+        if (!app.isQuiting) {
+            event.sender.hide()
+            event.preventDefault() //prevent quit process
+        }
     })
 
 
@@ -54,7 +55,7 @@ function createMainWindow() {
 
     autoUpdater.on('update-available', (updateInfo) => {
         //Callback function
-        console.log(updateInfo.releaseName , updateInfo.releaseNotes, updateInfo.releaseDate)
+        console.log(updateInfo.releaseName, updateInfo.releaseNotes, updateInfo.releaseDate)
         mainWindow.webContents.send('updateAvailable', updateInfo)
     });
 
@@ -205,7 +206,7 @@ app.whenReady().then(() => {
         {
             label: 'Close App',
             click: () => {
-                mainWindow.close()
+                app.isQuiting = true
                 app.quit()
             }
         }
@@ -219,13 +220,19 @@ app.whenReady().then(() => {
     })
 })
 
+app.on('before-quit', function () {
+    app.isQuiting = true;
+});
+
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit()
     }
 })
 
-app.setLoginItemSettings({
-    openAtLogin: true,
-    args: ['--hidden']
-})
+if (!isDev) {
+    app.setLoginItemSettings({
+        openAtLogin: true,
+        args: ['--hidden']
+    })
+}
