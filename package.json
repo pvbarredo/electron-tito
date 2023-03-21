@@ -1,7 +1,7 @@
 {
   "name": "electron-tito",
   "productName": "TITO",
-  "version": "v1.0.6",
+  "version": "v1.0.7",
   "description": "app that sends time in and out in windows using python win32",
   "main": "main.js",
   "scripts": {
