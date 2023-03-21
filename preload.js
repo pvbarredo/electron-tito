@@ -26,16 +26,16 @@ ipcRenderer.on('checkEndDayEmail', (event, args) => {
 
 ipcRenderer.on('checkStartDayEmailInBackground', (event, args) => {
     if(args !== 'True'){
-        new Notification("START DAY EMAIL", { body: "You have NOOOTTT yet submitted a start day email" })
+        new Notification("START DAY EMAIL", { body: "You have NOOOTTT yet submitted a start day email" , requireInteraction: true})
     }
 })
 
 ipcRenderer.on('checkEndDayEmailInBackground', (event, args) => {
     if(args !== 'True'){
-        new Notification("END DAY EMAIL", { body: "You have NOOOTTT yet submitted an end day email"})
+        new Notification("END DAY EMAIL", { body: "You have NOOOTTT yet submitted an end day email", requireInteraction: true})
     }
 })
 
 ipcRenderer.on('update_available', (event, args) => {
-    new Notification("Update Available " + args.releaseName, { body: args.releaseDate + "\n" + args.releaseNotes})
+    new Notification("Update Available " + args.releaseName, { body: args.releaseDate + "\n" + args.releaseNotes, requireInteraction: true})
 })

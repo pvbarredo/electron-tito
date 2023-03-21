@@ -4,6 +4,9 @@ publish:
     provider: github
     token: YOUR_GITHUB_TOKEN
 
+releaseInfo:
+  releaseNotesFile: "./release-notes.md"
+  
 extraFiles: [
   "db/tito.sqlite3",
   "python/**/*",
