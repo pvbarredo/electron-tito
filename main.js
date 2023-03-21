@@ -3,7 +3,8 @@ const path = require('path')
 const {PythonShell} = require('python-shell')
 const {autoUpdater} = require("electron-updater")
 let log = require("electron-log")
-const packageJson = require('./package.json');
+const packageJson = require('./package.json')
+const isDev = require('electron-is-dev')
 
 const sqlite3 = require('sqlite3').verbose()
 const {open} = require('sqlite')
@@ -35,15 +36,26 @@ function createMainWindow() {
     mainWindow.loadFile(path.join(__dirname, './renderer/index.html'))
 
 
+
     mainWindow.on("close", event => {
         event.sender.hide()
         event.preventDefault() //prevent quit process
     })
 
 
+    setInterval(() => {
+        autoUpdater.checkForUpdatesAndNotify()
+    }, 60 * 1000 * 30) //30 mins check for update
+
     mainWindow.once("ready-to-show", () => {
         log.info("Checking for update ")
-        autoUpdater.checkForUpdatesAndNotify();
+        autoUpdater.checkForUpdatesAndNotify()
+    })
+
+    autoUpdater.on('update-available', (updateInfo) => {
+        //Callback function
+        console.log(updateInfo.releaseName , updateInfo.releaseNotes, updateInfo.releaseDate)
+        mainWindow.webContents.send('updateAvailable', updateInfo)
     });
 
     ipcMain.handle('email:start-day', () => {
@@ -72,13 +84,13 @@ function createMainWindow() {
         })
         pyshell.end(async function (err) {
             if (err) {
-                console.log(err);
-                log.error(err);
+                console.log(err)
+                log.error(err)
 
-                throw err;
+                throw err
             }
-            log.info('finished');
-            console.log('finished');
+            log.info('finished')
+            console.log('finished')
         })
     })
 
@@ -97,13 +109,13 @@ function createMainWindow() {
         })
         pyshell.end(async function (err) {
             if (err) {
-                console.log(err);
-                log.error(err);
+                console.log(err)
+                log.error(err)
 
-                throw err;
+                throw err
             }
-            log.info('finished');
-            console.log('finished');
+            log.info('finished')
+            console.log('finished')
         })
     })
 
@@ -151,11 +163,11 @@ function createEmailWindow(isStartDayEmail) {
         pyshell.send(JSON.stringify(args))
         pyshell.end(async function (err) {
             if (err) {
-                log.error(err);
-                throw err;
+                log.error(err)
+                throw err
             }
-            log.info('finished');
-            console.log('finished');
+            log.info('finished')
+            console.log('finished')
 
             //after sending email  save
             let query = "UPDATE email SET  body_email = ?, to_email = ?  WHERE NAME='start_day' OR NAME='end_day'"
@@ -180,7 +192,7 @@ app.whenReady().then(() => {
         }
     })
 
-    tray = new Tray('./assets/icon/icon.ico')
+    tray = new Tray('./assets/icon/icon.png')
     const contextMenu = Menu.buildFromTemplate([
         {
             label: 'Show App',
@@ -214,5 +226,6 @@ app.on('window-all-closed', () => {
 })
 
 app.setLoginItemSettings({
-    openAtLogin: true
+    openAtLogin: true,
+    args: ['--hidden']
 })

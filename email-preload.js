@@ -20,3 +20,5 @@ ipcRenderer.on('email_data', (event, args) => {
     document.getElementById("emailSubject").value = "WFH " + new Date().toDateString();
     document.getElementById("emailBody").textContent = args.body_email;
 })
+
+

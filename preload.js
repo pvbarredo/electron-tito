@@ -35,3 +35,7 @@ ipcRenderer.on('checkEndDayEmailInBackground', (event, args) => {
         new Notification("END DAY EMAIL", { body: "You have NOOOTTT yet submitted an end day email"})
     }
 })
+
+ipcRenderer.on('update_available', (event, args) => {
+    new Notification("Update Available " + args.releaseName, { body: args.releaseDate + "\n" + args.releaseNotes})
+})
