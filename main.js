@@ -29,6 +29,7 @@ function createMainWindow() {
     mainWindow = new BrowserWindow({
         width: 1000,
         height: 700,
+        autoHideMenuBar: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
@@ -140,7 +141,8 @@ function createEmailWindow(isStartDayEmail) {
     emailWindow = new BrowserWindow({
         parent: mainWindow,
         width: 500,
-        height: 750,
+        height: 650,
+        autoHideMenuBar: true,
         webPreferences: {
             preload: path.join(__dirname, 'email-preload.js')
         }
