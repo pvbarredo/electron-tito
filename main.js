@@ -46,7 +46,7 @@ function createMainWindow() {
 
     setInterval(() => {
         autoUpdater.checkForUpdatesAndNotify()
-    }, 60 * 1000 * 30) //30 mins check for update
+    }, 60 * 1000 * 15) //15 mins check for update
 
     mainWindow.once("ready-to-show", () => {
         log.info("Checking for update ")
@@ -219,6 +219,12 @@ app.whenReady().then(() => {
         }
     })
 })
+
+let isSingleInstance = app.requestSingleInstanceLock()
+if (!isSingleInstance) {
+    // prevent multiple process
+    app.quit()
+}
 
 app.on('before-quit', function () {
     app.isQuiting = true;

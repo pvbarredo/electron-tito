@@ -23,7 +23,10 @@ setInterval(async() => {
 }, 60 * 1000 * 30)
 
 setInterval(async() => {
-    await window.email.checkEndDayInBackground()
+    // start notification after 12 PM
+    if(new Date().getHours() > 12){
+        await window.email.checkEndDayInBackground()
+    }
 }, 60 * 1000 * 30)
 
 function showTime() {
