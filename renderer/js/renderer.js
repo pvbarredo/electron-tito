@@ -16,6 +16,14 @@ document.getElementById('check-end-day').addEventListener('click', async () => {
     await window.email.checkEndDay()
 })
 
+document.getElementById('checkbox-start').addEventListener('click', async () => {
+    await window.email.checkboxStart(document.getElementById('checkbox-start').checked)
+})
+
+document.getElementById('checkbox-end').addEventListener('click', async () => {
+    await window.email.checkboxEnd(document.getElementById('checkbox-end').checked)
+})
+
 
 // EVERY 30 MINS CHECKING IF YOU ALREADY SEND AN EMAIL
 setInterval(async() => {

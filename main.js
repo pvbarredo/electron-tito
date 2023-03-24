@@ -121,6 +121,13 @@ function createMainWindow() {
         })
     })
 
+    ipcMain.handle('email:checkbox-start', async (event, payload) => {
+       console.log(payload, " IPC MAIN")
+    })
+    ipcMain.handle('email:checkbox-end', async (event, payload) => {
+        console.log(payload, " IPC MAIN")
+    })
+
     ipcMain.handle('executeQuery', async (event, query) => {
         const db = await createDBConnection()
         const row = await db.get(query)

@@ -12,6 +12,8 @@ contextBridge.exposeInMainWorld('email', {
     checkEndDay: () => ipcRenderer.invoke('email:check-end-day'),
     checkStartDayInBackground: () => ipcRenderer.invoke('email:check-start-day', {background: true}),
     checkEndDayInBackground: () => ipcRenderer.invoke('email:check-end-day', {background: true}),
+    checkboxStart: (value) => ipcRenderer.invoke('email:checkbox-start', {value}),
+    checkboxEnd: (value) => ipcRenderer.invoke('email:checkbox-end',{value}),
     close: () => ipcRenderer.invoke('email:close')
 })
 
