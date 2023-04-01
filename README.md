@@ -1,7 +1,7 @@
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-
+![GitHub all releases](https://img.shields.io/github/downloads/pvbarredo/electron-tito/total)
+![GitHub Repo stars](https://img.shields.io/github/stars/pvbarredo/electron-tito?style=social)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/pvbarredo/electron-tito)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/pvbarredo/electron-tito)
 <br>
 <div align="center">
     <img src="assets/icon/icon.png" alt="Logo" width="80" height="80">
