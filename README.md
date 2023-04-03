@@ -11,6 +11,11 @@
 
 Easy Time In Time Out sending email using outlook for WFH/WIO, using electron python
 
+## Installation Guide
+This app is working only in Windows with Outlook application
+
+Download latest release [here](https://github.com/pvbarredo/electron-tito/releases)
+
 ## Developer Guide
 You should have the following installed on your machine
 * python 3.X.X

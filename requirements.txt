@@ -1,2 +1,2 @@
-pywin32===305
+pywin32==306
 pyinstaller===5.9.0

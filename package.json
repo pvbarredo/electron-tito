@@ -7,7 +7,8 @@
   "scripts": {
     "start": "electron .",
     "electron:build": "electron-builder build --win --publish never ",
-    "electron:deploy": "electron-builder build --win --publish always",
+    "electron:deploy": "npm run python:build && electron-builder build --win --publish always",
+    "python:build": "python -m PyInstaller -y python/main.py  && python -m PyInstaller -y python/check.py",
     "electron:dev": "npx electronmon .",
     "postinstall": "electron-builder install-app-deps",
     "test": "echo \"Error: no test specified\" && exit 1"
