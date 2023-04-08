@@ -5,19 +5,19 @@ const path = require('path')
 const {PythonShell} = require('python-shell')
 const {createEmailWindow} = require("../email/email-electron");
 
-exports.createMainWindow = (mainWindow) => {
+exports.createMainWindow = async(mainWindow) => {
     let emailWindow = null;
     log.info("Creating mainwindow ")
     mainWindow = new BrowserWindow({
         width: 1000,
         height: 700,
         autoHideMenuBar: true,
-        icon: path.join(__dirname, './assets/icon/icon.png'),
+        icon: './assets/icon/icon.png',
         webPreferences: {
             preload: path.join(__dirname, './main-preload.js')
         }
     })
-    mainWindow.loadFile(path.join(__dirname, './main.html'))
+    await mainWindow.loadFile(path.join(__dirname, './main.html'))
 
 
     mainWindow.on("close", event => {
@@ -70,13 +70,10 @@ exports.createMainWindow = (mainWindow) => {
         })
         pyshell.end(async function (err) {
             if (err) {
-                console.log(err)
                 log.error(err)
-
                 throw err
             }
             log.info('finished')
-            console.log('finished')
         })
     })
 
@@ -97,13 +94,10 @@ exports.createMainWindow = (mainWindow) => {
         })
         pyshell.end(async function (err) {
             if (err) {
-                console.log(err)
                 log.error(err)
-
                 throw err
             }
             log.info('finished')
-            console.log('finished')
         })
     })
 
@@ -121,4 +115,6 @@ exports.createMainWindow = (mainWindow) => {
         return row
 
     })
+
+    return mainWindow
 }

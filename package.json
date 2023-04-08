@@ -3,7 +3,7 @@
   "productName": "TITO",
   "version": "v1.0.9",
   "description": "app that sends time in and out in windows using python win32",
-  "main": "src/index.js",
+  "main": "src/electron.js",
   "scripts": {
     "start": "electron .",
     "electron:build": "electron-builder build --win --publish never ",
@@ -16,6 +16,7 @@
   "author": "Peter Barredo",
   "license": "ISC",
   "dependencies": {
+    "auto-launch": "^5.0.5",
     "electron-is-dev": "^2.0.0",
     "electron-log": "^5.0.0-beta.16",
     "electron-updater": "^5.3.0",
