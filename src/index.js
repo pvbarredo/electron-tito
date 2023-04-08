@@ -3,7 +3,7 @@ const path = require('path')
 const {PythonShell} = require('python-shell')
 const {autoUpdater} = require("electron-updater")
 let log = require("electron-log")
-const packageJson = require('./package.json')
+const packageJson = require('../package.json')
 const isDev = require('electron-is-dev')
 
 const sqlite3 = require('sqlite3').verbose()
@@ -31,10 +31,10 @@ function createMainWindow() {
         height: 700,
         autoHideMenuBar: true,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js')
+            preload: path.join(__dirname, './main/main-preload.js')
         }
     })
-    mainWindow.loadFile(path.join(__dirname, './renderer/index.html'))
+    mainWindow.loadFile(path.join(__dirname, './main/main.html'))
 
 
     mainWindow.on("close", event => {
@@ -76,6 +76,7 @@ function createMainWindow() {
             emailSubject: "WFH " + new Date().toDateString()
         }
         let pyshell = new PythonShell('./python/check.py')
+        log.info("Running python check.py")
 
         pyshell.send(JSON.stringify(payload))
         pyshell.on("message", function (message) {
@@ -103,9 +104,11 @@ function createMainWindow() {
             emailSubject: "RE: WFH " + new Date().toDateString()
         }
         let pyshell = new PythonShell('./python/check.py')
+        log.info("Running python check.py")
 
         pyshell.send(JSON.stringify(payload), {mode: 'json'})
         pyshell.on("message", function (message) {
+            log.info("Python return message")
             isForBackgroundProcess ? mainWindow.webContents.send('checkEndDayEmailInBackground', message) :
                 mainWindow.webContents.send('checkEndDayEmail', message)
         })
@@ -140,7 +143,6 @@ function createMainWindow() {
 function createEmailWindow(isStartDayEmail) {
     if (emailWindow) {
         if (!emailWindow.isDestroyed()) {
-            console.log("SHOW MAY EMAIL WINDOW AT DI DESTROYED")
             emailWindow.show()
             return
         }
@@ -151,10 +153,10 @@ function createEmailWindow(isStartDayEmail) {
         height: 650,
         autoHideMenuBar: true,
         webPreferences: {
-            preload: path.join(__dirname, 'email-preload.js')
+            preload: path.join(__dirname, './email/email-preload.js')
         }
     })
-    emailWindow.loadFile(path.join(__dirname, './renderer/email.html'))
+    emailWindow.loadFile(path.join(__dirname, './email/email.html'))
 
     emailWindow.webContents.on("did-finish-load", async () => {
         emailWindow.webContents.send('isStartDayEmail', isStartDayEmail)
@@ -194,10 +196,12 @@ function createEmailWindow(isStartDayEmail) {
 }
 
 app.whenReady().then(() => {
+    log.info("App is Ready")
     createMainWindow()
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
+            log.info("App activate but 0 windows")
             createMainWindow()
         }
     })
@@ -232,10 +236,12 @@ app.whenReady().then(() => {
 let isSingleInstance = app.requestSingleInstanceLock()
 if (!isSingleInstance) {
     // prevent multiple process
+    log.info("App multiple instance prevented")
     app.quit()
 }
 
 app.on('before-quit', function () {
+    log.info("App is quitting")
     app.isQuiting = true;
 });
 

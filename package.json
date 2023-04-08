@@ -3,7 +3,7 @@
   "productName": "TITO",
   "version": "v1.0.9",
   "description": "app that sends time in and out in windows using python win32",
-  "main": "main.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "electron .",
     "electron:build": "electron-builder build --win --publish never ",
