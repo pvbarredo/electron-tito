@@ -15,8 +15,7 @@ extraFiles: [
 
 files:
   [
-    "*.js",
-    "renderer/**/*"
+    "src/**/*"
   ]
 
 icon: ./assets/icon/icon.png

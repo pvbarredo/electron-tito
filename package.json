@@ -1,13 +1,13 @@
 {
   "name": "electron-tito",
   "productName": "TITO",
-  "version": "v1.0.9",
+  "version": "v1.0.10",
   "description": "app that sends time in and out in windows using python win32",
   "main": "src/electron.js",
   "scripts": {
     "start": "electron .",
     "electron:build": "electron-builder build --win --publish never ",
-    "electron:deploy": "npm run python:build && electron-builder build --win --publish always",
+    "electron:deploy": "electron-builder build --win --publish always",
     "python:build": "python -m PyInstaller -y python/main.py  && python -m PyInstaller -y python/check.py",
     "electron:dev": "npx electronmon .",
     "postinstall": "electron-builder install-app-deps",

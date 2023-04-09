@@ -12,7 +12,7 @@ exports.createMainWindow = async(mainWindow) => {
         width: 1000,
         height: 700,
         autoHideMenuBar: true,
-        icon: './assets/icon/icon.png',
+        icon: path.join(__dirname, '../../assets/icon/icon.png'),
         webPreferences: {
             preload: path.join(__dirname, './main-preload.js')
         }

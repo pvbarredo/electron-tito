@@ -25,6 +25,8 @@ You should have the following installed on your machine
 ### `pip install -r requirements.txt`
 ### `npm run electron:dev`
 
+If you want to test your build in a fresh windows, you can download image from windows then create a VM 
+
 ## Deployment
 Duplicate electron-builder.yaml.example  and rename it to just electron-builder.yaml
 
